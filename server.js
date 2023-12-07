@@ -1,5 +1,10 @@
 require("dotenv").config();
+const express = require("express");
+const bodyParser = require("body-parser");
 const { Urbit } = require("./urbit-api.cjs");
+
+const app = express();
+app.use(bodyParser.json());
 
 const URBIT_URL = process.env.URBIT_URL;
 const URBIT_SHIP = process.env.URBIT_SHIP;
@@ -12,12 +17,12 @@ async function connectToUrbit() {
     ship: URBIT_SHIP,
     url: URBIT_URL,
     code: URBIT_CODE,
-    verbose: true,
   });
 }
 
-async function sendTestPoke() {
+async function sendPoke(requestBody) {
   await connectToUrbit();
+  // const { action, data } = requestBody;
   try {
     await urbit.poke({
       app: "channels",
@@ -38,7 +43,8 @@ async function sendTestPoke() {
                 content: [
                   {
                     inline: [
-                      "hi from a bot",
+                      "Hi from a bot",
+                      // `${data.identifier} marked as ${data.state.name}`,
                       {
                         break: null,
                       },
@@ -51,11 +57,22 @@ async function sendTestPoke() {
         },
       },
     });
-
     console.log("Poke sent successfully");
   } catch (error) {
     console.error("Error sending poke:", error);
   }
 }
 
-sendTestPoke();
+app.post("/webhook", async (req, res) => {
+  try {
+    await sendPoke(req.body);
+    res.status(200).send("Poke sent successfully");
+  } catch (error) {
+    res.status(500).send("Error in sending poke");
+  }
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
