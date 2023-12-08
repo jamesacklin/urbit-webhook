@@ -20,9 +20,12 @@ async function connectToUrbit() {
   });
 }
 
-async function sendPoke(requestBody) {
+async function sendPoke(message) {
   await connectToUrbit();
-  // const { action, data } = requestBody;
+  if (typeof message !== "string") {
+    if (typeof message === "object") message = JSON.stringify(message);
+    else message = message.toString();
+  }
   try {
     await urbit.poke({
       app: "channels",
@@ -43,8 +46,7 @@ async function sendPoke(requestBody) {
                 content: [
                   {
                     inline: [
-                      "Hi from a bot",
-                      // `${data.identifier} marked as ${data.state.name}`,
+                      message,
                       {
                         break: null,
                       },
