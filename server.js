@@ -6,6 +6,22 @@ const { Urbit } = require("./urbit-api.cjs");
 const app = express();
 app.use(bodyParser.json());
 
+async function loadModule() {
+  const moduleName = process.env.MODULE_NAME;
+  if (!moduleName) {
+    console.error("No module name specified in environment variable");
+    return null;
+  }
+
+  try {
+    const module = await import(moduleName);
+    return module.default;
+  } catch (error) {
+    console.error("Module import failed:", error);
+    return null;
+  }
+}
+
 const URBIT_URL = process.env.URBIT_URL;
 const URBIT_SHIP = process.env.URBIT_SHIP;
 const URBIT_CODE = process.env.URBIT_CODE;
@@ -66,8 +82,15 @@ async function sendPoke(message) {
 }
 
 app.post("/webhook", async (req, res) => {
+  const module = await loadModule();
+  let message;
+  if (module) {
+    message = module(req.body);
+  } else {
+    message = req.body.toString();
+  }
   try {
-    await sendPoke(req.body);
+    await sendPoke(message);
     res.status(200).send("Poke sent successfully");
   } catch (error) {
     res.status(500).send("Error in sending poke");
