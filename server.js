@@ -54,7 +54,7 @@ async function sendPoke(message) {
             post: {
               add: {
                 "kind-data": {
-                  chat: { notice: null },
+                  chat: null,
                 },
                 author: `~${URBIT_SHIP}`,
                 // TODO: make this a real time

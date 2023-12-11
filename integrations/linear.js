@@ -4,11 +4,11 @@ function processLinearUpdate(obj) {
   const { name } = state;
 
   if (action === "create") {
-    return `${identifier} created: ${title}`;
+    return `[Linear] ${identifier} created: ${title}`;
   }
 
   if (action === "update") {
-    return `${identifier} (${title}) updated to ${name} (${priorityLabel.toLowerCase()})`;
+    return `[Linear] ${identifier} (${title}) updated to ${name} (${priorityLabel.toLowerCase()})`;
   }
 
   return obj.toString();
