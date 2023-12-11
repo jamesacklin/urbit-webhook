@@ -24,3 +24,7 @@ MODULE_NAME = ./integrations/linear.js
 ```
 
 4. Run `node server.js` to start the server.
+
+## Notes
+
+This repository contains a patched version of the [`@urbit/http-api`](https://www.npmjs.com/package/@urbit/http-api) package which permits successful authorization from a node.js context.
